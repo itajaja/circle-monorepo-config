@@ -1,0 +1,13 @@
+{
+  "src": "https://github.com/itajaja/boilerplate-script-ts.git#f354c84147a2c290bdff0bb9aaccb86e59f35f71",
+  "scripts": {
+    "ci": "yarn build && yarn start",
+    "test": "yarn lint && yarn typecheck"
+  },
+  "dependencies": {
+    "@types/lodash": "4.14.167",
+    "@types/node-fetch": "2.5.8",
+    "lodash": "4.17.20",
+    "node-fetch": "2.6.1"
+  }
+}

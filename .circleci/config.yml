@@ -1,0 +1,96 @@
+version: 2.1
+
+parameters:
+  # This parameter is used to trigger the main workflow
+  trigger:
+    type: boolean
+    default: true
+
+  # A parameter per project
+  circle:
+    type: boolean
+    default: false
+  projA:
+    type: boolean
+    default: false
+  projB:
+    type: boolean
+    default: false
+  projC:
+    type: boolean
+    default: false
+
+executors:
+  node:
+    docker: [{ image: cimg/node:15.5.1 }]
+
+jobs:
+  trigger-workflows:
+    executor: node
+    working_directory: ~/project/.circleci
+
+    steps:
+      - checkout: { path: ~/project }
+      - run: npx look-ma
+      - run: yarn ci
+
+  test-circle:
+    parameters:
+      workdir: { type: string }
+
+    executor: node
+    working_directory: ~/project/<< parameters.workdir >>
+
+    steps:
+      - checkout: { path: ~/project }
+      - run: echo 'run your tests'
+
+  simple-test:
+    parameters:
+      workdir: { type: string }
+
+    executor: node
+    working_directory: ~/project/<< parameters.workdir >>
+
+    steps:
+      - checkout: { path: ~/project }
+      - run: npx look-ma
+      - run: yarn test
+
+workflows:
+  version: 2
+
+  # The main workflow responsible for triggering all other workflows
+  # in which changes are detected.
+  ci:
+    when: << pipeline.parameters.trigger >>
+    jobs:
+      - trigger-workflows
+
+  # Workflows defined for each package.
+
+  circle:
+    when: << pipeline.parameters.circle >>
+    jobs:
+      - test-circle:
+          name: '[circle] test'
+          workdir: .circleci
+
+  projA:
+    when: << pipeline.parameters.projA >>
+    jobs:
+      - test:
+          name: '[projA] test'
+          workdir: projA
+  projB:
+    when: << pipeline.parameters.projB >>
+    jobs:
+      - test:
+          name: '[projB] test'
+          workdir: projB
+  projC:
+    when: << pipeline.parameters.projC >>
+    jobs:
+      - test:
+          name: '[projC] test'
+          workdir: projC

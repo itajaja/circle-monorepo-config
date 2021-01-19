@@ -109,6 +109,7 @@ async function run() {
 
   if (projectDeps.every((p) => !p.shouldRun)) {
     console.log('no project to run, exiting');
+    return;
   }
 
   const pipelineParams = projectDeps.reduce(
